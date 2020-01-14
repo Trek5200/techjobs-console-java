@@ -61,6 +61,8 @@ public class JobData {
      * For example, searching for employer "Enterprise" will include results
      * with "Enterprise Holdings, Inc".
      *
+     * Modified to make search case insensitive.
+     *
      * @param column   Column that should be searched.
      * @param value Value of teh field to search for
      * @return List of all jobs matching the criteria
@@ -75,14 +77,50 @@ public class JobData {
         for (HashMap<String, String> row : allJobs) {
 
             String aValue = row.get(column);
-
-            if (aValue.contains(value)) {
+            aValue = aValue.toLowerCase();                  //Added for lowerCase MUST REMEMBER STRING IMMUTABILITY!!!
+//            System.out.println(value);                    //Added for debug
+//            System.out.println(aValue);                   //Added for debug
+            if (aValue.contains(value.toLowerCase())) {     //Added for lowerCase
+//            if (aValue.contains(value)) {                 /Replaced with above line to make case insensitive
                 jobs.add(row);
             }
         }
 
         return jobs;
     }
+
+    /**
+     * Returns results of searching all values in allJobs data that contain the search term
+     *
+     * For example, searching for "ing", "Ing", or "ING" will include results
+     * with any value that includes "ing" (e.g. Spring, Things, Non-coding, etc.)
+     *
+     * @param value Value of the field to search for
+     * @return jobsByValue List of all jobs matching the criteria
+     */
+    public static ArrayList<HashMap<String, String>> findByValue(String value){
+
+        loadData();                                                             // load data, if not already loaded
+
+        ArrayList<HashMap<String, String>> jobsByValue = new ArrayList<>();     // populate with matched values
+        String tempValue = "";                                                  // holds temporary HashMap string values; used in comparison to search value
+        boolean foundValue;                                                     // true when search value found in HashMap row
+
+        for (HashMap<String, String> row : allJobs){
+            foundValue = false;
+            for (String r : row.values()){
+                tempValue = r.toLowerCase();
+                if (tempValue.contains(value.toLowerCase())){
+                    foundValue = true;
+                }
+            }
+            if (foundValue) {
+                jobsByValue.add(row);
+            }
+        }
+        return jobsByValue;
+    }
+
 
     /**
      * Read in data from a CSV file and store it in a list

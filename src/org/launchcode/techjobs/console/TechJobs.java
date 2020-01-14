@@ -2,6 +2,7 @@ package org.launchcode.techjobs.console;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;                           //Added
 import java.util.Scanner;
 
 /**
@@ -31,13 +32,13 @@ public class TechJobs {
         // Allow the user to search until they manually quit
         while (true) {
 
-            String actionChoice = getUserSelection("View jobs by:", actionChoices);
+            String actionChoice = getUserSelection("View jobs by:", actionChoices);  //0Search or 1List
 
-            if (actionChoice.equals("list")) {
+            if (actionChoice.equals("list")) {  //1
 
-                String columnChoice = getUserSelection("List", columnChoices);
+                String columnChoice = getUserSelection("List", columnChoices);  // 0All, 1Pos, 2Emp, 3Loc, 4Skill
 
-                if (columnChoice.equals("all")) {
+                if (columnChoice.equals("all")) {  //0All
                     printJobs(JobData.findAll());
                 } else {
 
@@ -51,7 +52,7 @@ public class TechJobs {
                     }
                 }
 
-            } else { // choice is "search"
+            } else { // choice is 0Search
 
                 // How does the user want to search (e.g. by skill or employer)
                 String searchField = getUserSelection("Search by:", columnChoices);
@@ -61,7 +62,9 @@ public class TechJobs {
                 String searchTerm = in.nextLine();
 
                 if (searchField.equals("all")) {
-                    System.out.println("Search all fields not yet implemented.");
+//                    System.out.println("Search all fields not yet implemented.");
+                    printJobs(JobData.findByValue(searchTerm));                  //Added
+
                 } else {
                     printJobs(JobData.findByColumnAndValue(searchField, searchTerm));
                 }
@@ -111,6 +114,22 @@ public class TechJobs {
     // Print a list of jobs
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
 
-        System.out.println("printJobs is not implemented yet");
+//        System.out.println("printJobs is not implemented yet");
+        if (someJobs.size() > 0 ) {
+
+            int countJob = 1;
+            for (HashMap<String, String> job : someJobs) {                      //Added
+
+                System.out.println("\n***** Start Job# " + countJob);           //Added
+                for (Map.Entry<String, String> sj : job.entrySet()) {            //Added
+
+                    System.out.println(sj.getKey() + " : " + sj.getValue());    //Added
+                }
+                System.out.println("***** End Job # " + countJob + "\n");       //Added
+                countJob++;
+            }                                                                   //Added
+        } else {
+            System.out.println("Search term was not found in the data.");
+        }
     }
 }
